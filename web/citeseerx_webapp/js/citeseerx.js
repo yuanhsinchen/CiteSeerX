@@ -17,7 +17,14 @@ $(function() {
 	});
 	$(".abstract_toggle").click(function(){
     $(this).siblings(".pubabstract").slideToggle("slow");
-  });
+    });
+	$(".kauthors_toggle").click(function(){
+    $(this).siblings(".kauthors").slideToggle("slow");
+    if ($(this).text().indexOf("Show more authors") >= 0)
+        $(this).text("Show fewer authors");
+    else
+        $(this).text("Show more authors");
+    });
 });
 
 function toggleCitation(citationNo){

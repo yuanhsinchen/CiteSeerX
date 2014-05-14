@@ -47,6 +47,10 @@
   cursor: pointer;
 }
 
+.kauthors_toggle {
+  cursor: pointer;
+}
+
 .pubabstract {
   border: 1px solid #bbb;
   background: #eee;
@@ -54,6 +58,10 @@
   padding: 8px;
   display: none;
   color: #333;
+}
+
+.kauthors {
+  display: none;
 }
 
 .pubtools {

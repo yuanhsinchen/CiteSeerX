@@ -15,6 +15,9 @@ package edu.psu.citeseerx.domain;
 import java.io.Serializable;
 import java.util.Date;
 import edu.psu.citeseerx.utility.DateUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.util.ArrayList;
 
 /**
  * Light-weight bean container for document, citation, or cluster metadata.
@@ -49,7 +52,8 @@ public class ThinDoc implements Serializable {
     private boolean inCollection; 
     private String observations;
     private Date updateTime;
-    
+    private ArrayList<AuthorInfo> authorinfo;
+
     public String getAuthors() {
         return authors;
     } //- getAuthors
@@ -184,6 +188,30 @@ public class ThinDoc implements Serializable {
     public String getRfc3339Time() {
         return DateUtils.formatRFC3339(updateTime);
     } //- getRfc3339Time
+
+    public void setAuthorinfo(JSONArray auinfo) {
+        int len = auinfo.length();
+        this.authorinfo = new ArrayList<AuthorInfo>();
+        System.err.println("setAuthorInfo" + len);
+        for (int i = 0; i < len; i ++) {
+            AuthorInfo ai = new AuthorInfo();
+            JSONObject j = auinfo.optJSONObject(i);
+            String affiliations = j.optString("Affiliations");
+            String author = j.optString("author");
+            String href = j.optString("href");
+            if (affiliations != null && !affiliations.equals("null"))
+                ai.setAffiliation(affiliations);
+            if (author != null && !author.equals("null"))
+                ai.setAuthor(author);
+            if (href != null && !href.equals("null"))
+                ai.setHref(href);
+            this.authorinfo.add(ai);
+        }
+    } //- setAuthorInfo
+
+    public ArrayList<AuthorInfo> getAuthorinfo() {
+        return authorinfo;
+    } //- getAuthorinfo
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()

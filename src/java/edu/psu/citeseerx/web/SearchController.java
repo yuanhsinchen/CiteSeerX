@@ -25,6 +25,7 @@ import edu.psu.citeseerx.domain.UniqueAuthor;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.ModelAndView;
@@ -459,17 +460,31 @@ public class SearchController implements Controller {
 
             String solrQuery = buildSolrQuery(DOCUMENT_QUERY, queryParameters);
 
+            String query = normalizeQuery(
+                    (String)queryParameters.get(QUERY_PARAMETER));
+
             try {
-                JSONObject output = executeSolrQuery(solrSelectUrl, solrQuery);
-                JSONObject responseObject = output.getJSONObject("response");
-                numFound = responseObject.getInt("numFound");
+                JSONObject output; /* search results */
+                if (start < 10) { /* first result page from Fed Search */
+		    Process p = Runtime.getRuntime().exec(new String[]{"/home/yhchen/federated-search/index.py", query});
+		    p.waitFor();
+		    BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		    String line = "";
+		    StringBuffer sb = new StringBuffer();
+		    while ((line = reader.readLine())!= null)
+		        sb.append(line + "\n");
+                    output =  new JSONObject(sb.toString());
+                } else { /* others from Solr */
+                    output = executeSolrQuery(solrSelectUrl, solrQuery);
+                }
                 hits = SolrSelectUtils.buildHitListJSON(output);
-                
+                JSONObject responseObject = output.getJSONObject("response");
+
                 // Obtain COinS representation for hits.
                 String url = (systemBaseURL.endsWith("/") ? systemBaseURL : 
-                    systemBaseURL + "/") + "viewdoc/summary";
+                systemBaseURL + "/") + "viewdoc/summary";
                 coins = BiblioTransformer.toCOinS(hits, url);
-                
+                numFound = responseObject.getInt("numFound");
             } catch (SolrException e) {
                 error = true;
                 int code = e.getStatusCode();
@@ -520,7 +535,7 @@ public class SearchController implements Controller {
         
         return new ModelAndView("searchDocs", model);
     } //- doGeneralSearch
-    
+
     /*
      * Performs a query to Solr when the user is using the table search. It
      * obtains the result from Solr and sends the results back to the user.
