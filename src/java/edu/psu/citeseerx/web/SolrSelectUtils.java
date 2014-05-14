@@ -148,6 +148,7 @@ public class SolrSelectUtils {
             String publ = doc.optString("publisher");
             String tech = doc.optString("tech");
             Long vtime = doc.optLong("vtime");
+            JSONArray auinfo = doc.optJSONArray("author_info");
             
             if (title == null || title.length()<2 || title.equals("null")) {
                 hit.setTitle("unknown title");
@@ -180,21 +181,29 @@ public class SolrSelectUtils {
             if (vtime != null) {
                 hit.setUpdateTime(new Date(vtime));
             }
-            
-            JSONArray authArray = doc.optJSONArray("author");
-            if (authArray != null && authArray.length() > 0) {
-                StringBuffer authBuf = new StringBuffer();
-                for (int a=0; a<authArray.length(); a++) {
-                    authBuf.append(authArray.getString(a));
-                    if (a < authArray.length()-1) {
-                        authBuf.append(", ");
-                    }
-                }
-                hit.setAuthors(authBuf.toString());
+            if (auinfo != null) {
+                hit.setAuthorinfo(auinfo);
             } else {
-                hit.setAuthors("unknown authors");
+                JSONArray authArray = doc.optJSONArray("author");
+                if (authArray != null && authArray.length() > 0) {
+                    StringBuffer authBuf = new StringBuffer();
+                    for (int a=0; a<authArray.length(); a++) {
+                        authBuf.append(authArray.getString(a));
+                        if (a < authArray.length()-1) {
+                            authBuf.append(", ");
+                        }
+                    }
+                    String s = authBuf.toString();
+                    String []au = s.split(",");
+                    JSONArray ja = new JSONArray();
+                    for (String str:au) {
+                        JSONObject jo = new JSONObject();
+                        jo.put("author", str);
+                        ja.put(jo);
+                    }
+                    hit.setAuthorinfo(ja);
+                }
             }
-            
             try { 
                 hit.setNcites(doc.optInt("ncites",0));
             } catch (Exception e) { }
