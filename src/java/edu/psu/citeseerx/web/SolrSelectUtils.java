@@ -35,6 +35,7 @@ import org.json.JSONObject;
 
 import edu.psu.citeseerx.domain.Algorithm;
 import edu.psu.citeseerx.domain.ThinDoc;
+import edu.psu.citeseerx.domain.AuthorInfo;
 import edu.psu.citeseerx.domain.Table;
 import edu.psu.citeseerx.utility.SafeText;
 
@@ -148,6 +149,7 @@ public class SolrSelectUtils {
             String publ = doc.optString("publisher");
             String tech = doc.optString("tech");
             Long vtime = doc.optLong("vtime");
+            JSONArray auinfoArray = doc.optJSONArray("author_info");
             
             if (title == null || title.length()<2 || title.equals("null")) {
                 hit.setTitle("unknown title");
@@ -180,21 +182,46 @@ public class SolrSelectUtils {
             if (vtime != null) {
                 hit.setUpdateTime(new Date(vtime));
             }
-            
-            JSONArray authArray = doc.optJSONArray("author");
-            if (authArray != null && authArray.length() > 0) {
-                StringBuffer authBuf = new StringBuffer();
-                for (int a=0; a<authArray.length(); a++) {
-                    authBuf.append(authArray.getString(a));
-                    if (a < authArray.length()-1) {
-                        authBuf.append(", ");
+            if (auinfoArray != null) {
+                ArrayList<AuthorInfo> aiArray = new ArrayList<AuthorInfo>();
+
+                for (int j = 0; j < auinfoArray.length(); j++) {
+                    JSONObject jo = auinfoArray.optJSONObject(j);
+                    String affiliations = jo.optString("Affiliations");
+                    String author = jo.optString("author");
+                    String href = jo.optString("href");
+                    AuthorInfo ai = new AuthorInfo();
+
+                    if (affiliations != null && !affiliations.equals("null")) {
+                        ai.setAffiliation(affiliations);
                     }
+                    if (author != null && !author.equals("null")) {
+                        ai.setAuthor(author);
+                    }
+                    if (href != null && !href.equals("null")) {
+                        ai.setHref(href);
+                    }
+
+                    aiArray.add(ai);
                 }
-                hit.setAuthors(authBuf.toString());
+
+                hit.setAuthorInfo(aiArray);
             } else {
-                hit.setAuthors("unknown authors");
+                JSONArray authArray = doc.optJSONArray("author");
+
+                if (authArray != null && authArray.length() > 0) {
+                    ArrayList<AuthorInfo> aiArray = new ArrayList<AuthorInfo>();
+
+                    for (int j = 0; j < authArray.length(); j++) {
+                        AuthorInfo ai = new AuthorInfo();
+
+                        ai.setAuthor(authArray.getString(j));
+                        aiArray.add(ai);
+                    }
+
+                    hit.setAuthorInfo(aiArray);
+                }
             }
-            
             try { 
                 hit.setNcites(doc.optInt("ncites",0));
             } catch (Exception e) { }

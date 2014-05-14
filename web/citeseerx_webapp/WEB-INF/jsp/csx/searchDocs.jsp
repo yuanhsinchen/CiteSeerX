@@ -1,3 +1,4 @@
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ include file="../shared/IncludeHeader.jsp" %>
 <%-- Put your searchbox here. Best pratice is to customize and keep classes and ids. --%>
 <div id="main">
@@ -33,10 +34,6 @@
                 </c:if>
               </h3>
               <div class="pubinfo">
-                <span class="authors">by 
-                  <c:if test="${ ! empty hit.authors }"><c:out value="${ hit.authors }"/></c:if>
-                  <c:if test="${ empty hit.authors }">unknown authors</c:if>
-                </span>
                 <c:if test="${ ! empty hit.venue }">
                   <span class="pubvenue">- <c:out value="${ hit.venue }"/></span>
                 </c:if>
@@ -60,6 +57,39 @@
                     <c:out value="${ hit['abstract']}" escapeXml="false"/>
                   </div>
                   </c:if>
+                </c:if>
+              </div>
+              <div>
+                <c:forEach var="ai" items="${ hit.authorInfo }" varStatus="status">
+                  <c:if test="${status.index <= 1}">
+                    <span class="authors">
+                      <img src="<c:url value='/images/head.png'/>" width="15" height="15"/>
+                      <c:if test="${ ! empty ai.href }">
+                        <a href=${ai.href}>${ai.author}</a><br>
+                        ${ai.affiliation}<br>
+                      </c:if>
+                      <c:if test="${ empty ai.href }">
+                        ${ai.author}<br>
+                      </c:if>
+                    </span>
+                  </c:if>
+                  <c:if test="${status.index > 1}">
+                    <div class="kauthors">
+                      <span class="authors">
+                        <img src="<c:url value='/images/head.png'/>" width="15" height="15"/>
+                        <c:if test="${ ! empty ai.href }">
+                          <a href=${ai.href}>${ai.author}</a><br>
+                            ${ai.affiliation}<br>
+                        </c:if>
+                        <c:if test="${ empty ai.href }">
+                          ${ai.author}<br>
+                        </c:if>
+                      </span>
+                    </div>
+                  </c:if>
+                </c:forEach>
+                <c:if test="${fn:length(hit.authorInfo) gt 2}">
+                  <a class="kauthors_toggle">Show more authors</a>
                 </c:if>
               </div>
               <div class="pubtools">

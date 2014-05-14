@@ -15,6 +15,7 @@ package edu.psu.citeseerx.domain;
 import java.io.Serializable;
 import java.util.Date;
 import edu.psu.citeseerx.utility.DateUtils;
+import java.util.ArrayList;
 
 /**
  * Light-weight bean container for document, citation, or cluster metadata.
@@ -49,7 +50,8 @@ public class ThinDoc implements Serializable {
     private boolean inCollection; 
     private String observations;
     private Date updateTime;
-    
+    private ArrayList<AuthorInfo> authorInfo;
+
     public String getAuthors() {
         return authors;
     } //- getAuthors
@@ -184,6 +186,14 @@ public class ThinDoc implements Serializable {
     public String getRfc3339Time() {
         return DateUtils.formatRFC3339(updateTime);
     } //- getRfc3339Time
+
+    public void setAuthorInfo(ArrayList<AuthorInfo> authorInfo) {
+        this.authorInfo = authorInfo;
+    } //- setAuthorInfo
+
+    public ArrayList<AuthorInfo> getAuthorInfo() {
+        return authorInfo;
+    } //- getAuthorinfo
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
