@@ -11,6 +11,7 @@
         <div class="opts">
           <a href="<c:url value='/advanced_search'/>" title="Search full text, title, abstract, date, author name, author affiliation, etc.">Advanced Search</a>
           <input class="c_box" type="checkbox" name="ic" value="1" /> Include Citations
+          <input class="c_box" type="checkbox" name="fs" value="1" checked/> Federated Search
         </div>
         <input type="hidden" name="sort" value="<c:if test='${ empty param.sort }'>rlv</c:if><c:if test='${ ! empty param.sort }'><c:out value='${ param.sort }'/></c:if>" />
         <input type="hidden" name="t" value="doc" />
