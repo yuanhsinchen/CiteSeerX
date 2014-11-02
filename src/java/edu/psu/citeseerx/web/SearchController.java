@@ -163,6 +163,7 @@ public class SearchController implements Controller {
     private final String SORT = "sort";
     private final String START = "start";
     private final String INCLUDE_CITATIONS = "ic";
+    private final String FEDERATED_SEARCH = "fs";
     
     // Name of the sort options handled by CiteSeerX
     private static final String SORT_RLV  = "rlv";
@@ -247,6 +248,10 @@ public class SearchController implements Controller {
         queryParameters.put(INCLUDE_CITATIONS, 
                 ServletRequestUtils.getBooleanParameter(request, 
                         INCLUDE_CITATIONS, false));
+        queryParameters.put(FEDERATED_SEARCH,
+                ServletRequestUtils.getBooleanParameter(request,
+                        FEDERATED_SEARCH, false));
+
         return queryParameters;
     } //- collectQueryParam
     
@@ -451,6 +456,7 @@ public class SearchController implements Controller {
         List<ThinDoc> hits = new ArrayList<ThinDoc>();
         List<String> coins = new ArrayList<String>();
 
+        Boolean fs = (Boolean)queryParameters.get(FEDERATED_SEARCH);
         Integer start = (Integer)queryParameters.get(START);
         if (start >= maxresults) {
             error = true;
@@ -465,7 +471,7 @@ public class SearchController implements Controller {
 
             try {
                 JSONObject output; /* search results */
-                if (start < 10) { /* first result page from Fed Search */
+                if (fs && (start < 10)) { /* first result page from Fed Search */
 		    Process p = Runtime.getRuntime().exec(new String[]{"/home/yhchen/federated-search/index.py", query});
 		    p.waitFor();
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -517,6 +523,7 @@ public class SearchController implements Controller {
         model.put("error", error);
         model.put("errorMsg", errMsg);
         model.put("resultsize", numFound);
+        model.put("fs", fs);
         
         fillModel(model, queryParameters, DOCUMENT_QUERY);
         

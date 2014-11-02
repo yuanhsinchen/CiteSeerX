@@ -34,6 +34,12 @@
                 </c:if>
               </h3>
               <div class="pubinfo">
+                <c:if test="${ ! fs }">
+                <span class="authors">by 
+                  <c:if test="${ ! empty hit.authors }"><c:out value="${ hit.authors }"/></c:if>
+                  <c:if test="${ empty hit.authors }">unknown authors</c:if>
+                </span>
+                </c:if>
                 <c:if test="${ ! empty hit.venue }">
                   <span class="pubvenue">- <c:out value="${ hit.venue }"/></span>
                 </c:if>
@@ -59,6 +65,7 @@
                   </c:if>
                 </c:if>
               </div>
+             <c:if test="${ fs }">
               <div>
                 <c:forEach var="ai" items="${ hit.authorinfo }" varStatus="status">
                   <c:if test="${status.index <= 1}">
@@ -92,6 +99,7 @@
                   <a class="kauthors_toggle">Show more authors</a>
                 </c:if>
               </div>
+             </c:if>
               <div class="pubtools">
                 <c:if test="${ ! empty coins[status.index]}"><span class="Z3988" title="<c:out value='${coins[status.index]}' />"></span></c:if>
               </div>
