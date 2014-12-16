@@ -35,6 +35,7 @@ import org.json.JSONObject;
 
 import edu.psu.citeseerx.domain.Algorithm;
 import edu.psu.citeseerx.domain.ThinDoc;
+import edu.psu.citeseerx.domain.AuthorInfo;
 import edu.psu.citeseerx.domain.Table;
 import edu.psu.citeseerx.utility.SafeText;
 
@@ -148,7 +149,7 @@ public class SolrSelectUtils {
             String publ = doc.optString("publisher");
             String tech = doc.optString("tech");
             Long vtime = doc.optLong("vtime");
-            JSONArray auinfo = doc.optJSONArray("author_info");
+            JSONArray auinfoArray = doc.optJSONArray("author_info");
             
             if (title == null || title.length()<2 || title.equals("null")) {
                 hit.setTitle("unknown title");
@@ -181,27 +182,44 @@ public class SolrSelectUtils {
             if (vtime != null) {
                 hit.setUpdateTime(new Date(vtime));
             }
-            if (auinfo != null) {
-                hit.setAuthorinfo(auinfo);
+            if (auinfoArray != null) {
+                ArrayList<AuthorInfo> aiArray = new ArrayList<AuthorInfo>();
+
+                for (i = 0; i < auinfoArray.length(); i++) {
+                    JSONObject jo = auinfoArray.optJSONObject(i);
+                    String affiliations = jo.optString("Affiliations");
+                    String author = jo.optString("author");
+                    String href = jo.optString("href");
+                    AuthorInfo ai = new AuthorInfo();
+
+                    if (affiliations != null && !affiliations.equals("null")) {
+                        ai.setAffiliation(affiliations);
+                    }
+                    if (author != null && !author.equals("null")) {
+                        ai.setAuthor(author);
+                    }
+                    if (href != null && !href.equals("null")) {
+                        ai.setHref(href);
+                    }
+
+                    aiArray.add(ai);
+                }
+
+                hit.setAuthorinfo(aiArray);
             } else {
                 JSONArray authArray = doc.optJSONArray("author");
+
                 if (authArray != null && authArray.length() > 0) {
-                    StringBuffer authBuf = new StringBuffer();
-                    for (int a=0; a<authArray.length(); a++) {
-                        authBuf.append(authArray.getString(a));
-                        if (a < authArray.length()-1) {
-                            authBuf.append(", ");
-                        }
+                    ArrayList<AuthorInfo> aiArray = new ArrayList<AuthorInfo>();
+
+                    for (int a = 0; a < authArray.length(); a++) {
+                        AuthorInfo ai = new AuthorInfo();
+
+                        ai.setAuthor(authArray.getString(a));
+                        aiArray.add(ai);
                     }
-                    String s = authBuf.toString();
-                    String []au = s.split(",");
-                    JSONArray ja = new JSONArray();
-                    for (String str:au) {
-                        JSONObject jo = new JSONObject();
-                        jo.put("author", str);
-                        ja.put(jo);
-                    }
-                    hit.setAuthorinfo(ja);
+
+                    hit.setAuthorinfo(aiArray);
                 }
             }
             try { 
