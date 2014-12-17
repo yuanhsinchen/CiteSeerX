@@ -187,11 +187,11 @@ public class ThinDoc implements Serializable {
         return DateUtils.formatRFC3339(updateTime);
     } //- getRfc3339Time
 
-    public void setAuthorinfo(ArrayList<AuthorInfo> authorInfo) {
+    public void setAuthorInfo(ArrayList<AuthorInfo> authorInfo) {
         this.authorInfo = authorInfo;
     } //- setAuthorInfo
 
-    public ArrayList<AuthorInfo> getAuthorinfo() {
+    public ArrayList<AuthorInfo> getAuthorInfo() {
         return authorInfo;
     } //- getAuthorinfo
 

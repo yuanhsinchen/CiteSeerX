@@ -67,7 +67,7 @@
               </div>
              <c:if test="${ fs }">
               <div>
-                <c:forEach var="ai" items="${ hit.authorinfo }" varStatus="status">
+                <c:forEach var="ai" items="${ hit.authorInfo }" varStatus="status">
                   <c:if test="${status.index <= 1}">
                     <span class="authors">
                       <img src="<c:url value='/images/head.png'/>" width="15" height="15"/>
@@ -95,7 +95,7 @@
                     </div>
                   </c:if>
                 </c:forEach>
-                <c:if test="${fn:length(hit.authorinfo) gt 2}">
+                <c:if test="${fn:length(hit.authorInfo) gt 2}">
                   <a class="kauthors_toggle">Show more authors</a>
                 </c:if>
               </div>
