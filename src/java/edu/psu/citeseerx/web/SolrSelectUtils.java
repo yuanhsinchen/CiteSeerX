@@ -183,28 +183,7 @@ public class SolrSelectUtils {
                 hit.setUpdateTime(new Date(vtime));
             }
             if (auinfoArray != null) {
-                ArrayList<AuthorInfo> aiArray = new ArrayList<AuthorInfo>();
-
-                for (int j = 0; j < auinfoArray.length(); j++) {
-                    JSONObject jo = auinfoArray.optJSONObject(j);
-                    String affiliations = jo.optString("Affiliations");
-                    String author = jo.optString("author");
-                    String href = jo.optString("href");
-                    AuthorInfo ai = new AuthorInfo();
-
-                    if (affiliations != null && !affiliations.equals("null")) {
-                        ai.setAffiliation(affiliations);
-                    }
-                    if (author != null && !author.equals("null")) {
-                        ai.setAuthor(author);
-                    }
-                    if (href != null && !href.equals("null")) {
-                        ai.setHref(href);
-                    }
-
-                    aiArray.add(ai);
-                }
-
+                List<AuthorInfo> aiArray = buildAuthorInfoListJSON(auinfoArray);
                 hit.setAuthorInfo(aiArray);
             } else {
                 JSONArray authArray = doc.optJSONArray("author");
@@ -274,7 +253,33 @@ public class SolrSelectUtils {
         return hits;
         
     }  //- buildHitList
-   
+
+    public static List<AuthorInfo> buildAuthorInfoListJSON(JSONArray jsonAuthorInfo)
+            throws JSONException {
+
+        ArrayList<AuthorInfo> aiArray = new ArrayList<AuthorInfo>();
+
+        for (int i = 0; i < jsonAuthorInfo.length(); i++) {
+            JSONObject jo = jsonAuthorInfo.optJSONObject(i);
+            String affiliations = jo.optString("Affiliations");
+            String author = jo.optString("author");
+            String href = jo.optString("href");
+            AuthorInfo ai = new AuthorInfo();
+
+            if (affiliations != null && !affiliations.equals("null")) {
+                ai.setAffiliation(affiliations);
+            }
+            if (author != null && !author.equals("null")) {
+                ai.setAuthor(author);
+            }
+            if (href != null && !href.equals("null")) {
+                ai.setHref(href);
+            }
+
+            aiArray.add(ai);
+        }
+        return aiArray;
+    }
 
     /**
      * Transforms results of a query in JSON format to a List of CiteSeerX 
