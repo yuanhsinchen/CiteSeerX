@@ -185,8 +185,8 @@ public class SolrSelectUtils {
             if (auinfoArray != null) {
                 ArrayList<AuthorInfo> aiArray = new ArrayList<AuthorInfo>();
 
-                for (i = 0; i < auinfoArray.length(); i++) {
-                    JSONObject jo = auinfoArray.optJSONObject(i);
+                for (int j = 0; j < auinfoArray.length(); j++) {
+                    JSONObject jo = auinfoArray.optJSONObject(j);
                     String affiliations = jo.optString("Affiliations");
                     String author = jo.optString("author");
                     String href = jo.optString("href");
@@ -212,10 +212,10 @@ public class SolrSelectUtils {
                 if (authArray != null && authArray.length() > 0) {
                     ArrayList<AuthorInfo> aiArray = new ArrayList<AuthorInfo>();
 
-                    for (int a = 0; a < authArray.length(); a++) {
+                    for (int j = 0; j < authArray.length(); j++) {
                         AuthorInfo ai = new AuthorInfo();
 
-                        ai.setAuthor(authArray.getString(a));
+                        ai.setAuthor(authArray.getString(j));
                         aiArray.add(ai);
                     }
 
