@@ -22,6 +22,7 @@ import edu.psu.citeseerx.domain.Document;
 import edu.psu.citeseerx.domain.Table;
 import edu.psu.citeseerx.domain.ThinDoc;
 import edu.psu.citeseerx.domain.UniqueAuthor;
+import edu.psu.citeseerx.domain.AuthorInfo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -455,6 +456,7 @@ public class SearchController implements Controller {
         Integer numFound = 0;
         List<ThinDoc> hits = new ArrayList<ThinDoc>();
         List<String> coins = new ArrayList<String>();
+        List<AuthorInfo> experts= new ArrayList<AuthorInfo>();
 
         Boolean fs = (Boolean)queryParameters.get(FEDERATED_SEARCH);
         Integer start = (Integer)queryParameters.get(START);
@@ -491,6 +493,11 @@ public class SearchController implements Controller {
                 systemBaseURL + "/") + "viewdoc/summary";
                 coins = BiblioTransformer.toCOinS(hits, url);
                 numFound = responseObject.getInt("numFound");
+
+                JSONArray jsonExperts= responseObject.getJSONArray("experts");
+                if (jsonExperts != null) {
+                    experts = SolrSelectUtils.buildAuthorInfoListJSON(jsonExperts);
+                }
             } catch (SolrException e) {
                 error = true;
                 int code = e.getStatusCode();
@@ -529,6 +536,7 @@ public class SearchController implements Controller {
         
         model.put("hits", (!error) ? hits : new ArrayList<ThinDoc>());
         model.put("coins", (!error) ? coins : new ArrayList<String>());
+        model.put("experts", (!error) ? experts : new ArrayList<AuthorInfo>());
 
         String feed = (String)queryParameters.get(FEED);
         if (feed != null) {

@@ -20,6 +20,19 @@
           <%-- Sorting Dropdown--%>
           <c:if test="${ error }"><div class="error"><c:out value="${ errorMsg }" escapeXml="false"/></div></c:if>
           <c:forEach var="hit" items="${ hits }" varStatus="status">
+
+            <c:if test="${ ! empty experts && status.index == 3}">
+              <div class="result">
+                <h3>Experts you may be interested in:</h3>
+                <c:forEach var="expert" items="${ experts }" varStatus="status">
+                  <a href="<c:url value='${ expert.href }' />">
+                    <img src="<c:url value='/images/head.png'/>" width="15" height="15"/>
+                    <c:out value='${expert.author}'/>
+                  </a>
+                </c:forEach>
+              </div>
+            </c:if>
+
             <div class="result">
               <h3>
                 <c:if test="${ hit.inCollection }">
