@@ -205,7 +205,7 @@ public class SolrSelectUtils {
                     aiArray.add(ai);
                 }
 
-                hit.setAuthorinfo(aiArray);
+                hit.setAuthorInfo(aiArray);
             } else {
                 JSONArray authArray = doc.optJSONArray("author");
 
@@ -219,7 +219,7 @@ public class SolrSelectUtils {
                         aiArray.add(ai);
                     }
 
-                    hit.setAuthorinfo(aiArray);
+                    hit.setAuthorInfo(aiArray);
                 }
             }
             try { 
